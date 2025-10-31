@@ -64,6 +64,14 @@
       </div>
       <div class="score" id="scoreDisplay">Skor: 0</div>
       <canvas id="gameCanvas" width="800" height="300"></canvas>
+      <div id="mobileControls" style="display:none; text-align:center; margin-top:10px;">
+        <button onclick="setDirection('up')">⬆️</button><br/>
+        <button onclick="setDirection('left')">⬅️</button>
+        <button onclick="setDirection('down')">⬇️</button>
+        <button onclick="setDirection('right')">➡️</button><br/>
+        <button onclick="togglePause()">⏯️</button>
+        <button onclick="toggleMode()">🔄 Mode</button>
+      </div>
     </div>
   </div>
 
@@ -224,6 +232,43 @@
     });
 
     gameLoop = setInterval(gameTick, speed);
+
+    function isMobileDevice() {
+      return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    }
+
+    function setDirection(dir) {
+      if (gameMode === "snake") {
+        if (dir === "up" && direction.y === 0) direction = { x: 0, y: -1 };
+        else if (dir === "down" && direction.y === 0) direction = { x: 0, y: 1 };
+        else if (dir === "left" && direction.x === 0) direction = { x: -1, y: 0 };
+        else if (dir === "right" && direction.x === 0) direction = { x: 1, y: 0 };
+      } else if (gameMode === "tetris") {
+        if (dir === "left") tetrisPiece.x--;
+        else if (dir === "right") tetrisPiece.x++;
+      }
+    }
+
+    function togglePause() {
+      isPaused = !isPaused;
+    }
+
+    function toggleMode() {
+      gameMode = gameMode === "snake" ? "tetris" : "snake";
+      alert("Mode diganti ke: " + gameMode.toUpperCase());
+      clearInterval(gameLoop);
+      if (gameMode === "snake") {
+        resetSnake();
+      } else {
+        resetTetris();
+        gameLoop = setInterval(gameTick, 500);
+      }
+    }
+
+    if (isMobileDevice()) {
+      document.getElementById("mobileControls").style.display = "block";
+    }
+
   </script>
 </body>
 </html>
